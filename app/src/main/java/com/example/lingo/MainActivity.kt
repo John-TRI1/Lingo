@@ -3,10 +3,13 @@ package com.example.lingo
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.cardview.widget.CardView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import org.json.JSONArray
@@ -32,8 +35,27 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        val scrollView = findViewById<ScrollView>(R.id.mainScrollView)
+        val defaultPaddingLeft = scrollView.paddingLeft
+        val defaultPaddingTop = scrollView.paddingTop
+        val defaultPaddingRight = scrollView.paddingRight
+        val defaultPaddingBottom = scrollView.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView) { view, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                defaultPaddingLeft + systemBars.left,
+                defaultPaddingTop + systemBars.top,
+                defaultPaddingRight + systemBars.right,
+                defaultPaddingBottom + systemBars.bottom
+            )
+            windowInsets
+        }
+        ViewCompat.requestApplyInsets(scrollView)
+
 
         // Connecting Kotlin variables to the XML views
+
         val startQuizBtn = findViewById<MaterialButton>(R.id.startQuizBtn)
         val aiBtn = findViewById<MaterialButton>(R.id.generateExampleBtn)
         val aiCard = findViewById<MaterialCardView>(R.id.aiExampleCard)
@@ -94,6 +116,7 @@ class MainActivity : ComponentActivity() {
             }
 
             // Thread allows for increased app stability.
+
             Thread {
 
                 // Connects to OpenAI's endpoint
